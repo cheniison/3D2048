@@ -49,6 +49,20 @@ Point3F Point3F::operator-(const Point3F & rhs) const
 	return tmp;
 }
 
+bool Point3F::operator==(const Point3F & rhs) const
+{
+	if (fabs(x - rhs.x) < 1e-6&&fabs(y - rhs.y) < 1e-6&&fabs(z - rhs.z) < 1e-6)
+	{
+		return true;
+	}
+	return false;
+}
+
+bool Point3F::operator!=(const Point3F & rhs) const
+{
+	return !(*this == rhs);
+}
+
 double GetDistance(const Point3F &lhs, const Point3F &rhs)
 {
 	Point3F tmp = rhs - lhs;

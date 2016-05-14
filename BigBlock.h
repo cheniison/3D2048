@@ -14,6 +14,8 @@ public:
 	bool IsFull();//判断整个方块是否已满
 	bool IsEmpty();//判断方块是否为空
 	bool AddNumber();//随机给方块添加数字,若方块已满，则游戏结束
+	bool move();//如果有小方块移动，则返回真
+	Point3F cal_dest(const Block &);//计算小方块终点 
 
 private:
 	Point3F location;//中心位置

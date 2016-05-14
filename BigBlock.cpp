@@ -90,3 +90,46 @@ bool BigBlock::AddNumber()
 	}
 	
 }
+
+bool BigBlock::move()
+{
+	std::vector<std::vector<std::vector<Point3F>>> dest;//小方块的终点
+
+	for (int i = 0; i < size; ++i)
+	{
+		for (int j = 0; j < size; ++j)
+		{
+			for (int k = 0; k < size; ++k)
+			{
+				if (bigblock[i][j][k].number() != 0)
+				{
+					dest[i][j][k] = cal_dest(bigblock[i][j][k]);//算出每个小正方体的终点
+				}
+			}
+		}
+	} 
+	int flag;
+	do
+	{
+		flag = 0;
+		for (int i = 0; i < size; ++i)
+		{
+			for (int j = 0; j < size; ++j)
+			{
+				for (int k = 0; k < size; ++k)
+				{
+					if (bigblock[i][j][k].number() != 0)
+					{
+						flag += bigblock[i][j][k].move(dest[i][j][k]);//只要有一个小方块变动，则flag！=0
+					}
+				}
+			}
+		}
+	} while (flag);//直到所有小方块都不动，结束循环
+	
+}
+
+Point3F BigBlock::cal_dest(const Block &)
+{
+	return Point3F();
+}
