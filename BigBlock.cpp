@@ -91,7 +91,7 @@ bool BigBlock::AddNumber()
 	
 }
 
-bool BigBlock::move()
+bool BigBlock::move(const Vector& direct)
 {
 	std::vector<std::vector<std::vector<Point3F>>> dest;//小方块的终点
 
@@ -103,7 +103,7 @@ bool BigBlock::move()
 			{
 				if (bigblock[i][j][k].number() != 0)
 				{
-					dest[i][j][k] = cal_dest(bigblock[i][j][k]);//算出每个小正方体的终点
+					dest[i][j][k] = cal_dest(bigblock[i][j][k],direct);//算出每个小正方体的终点
 				}
 			}
 		}
@@ -140,7 +140,7 @@ bool BigBlock::move()
 	}
 }
 
-Point3F BigBlock::cal_dest(const Block &)
+Point3F BigBlock::cal_dest(const Block &sblock,const Vector& direct)
 {
 	return Point3F();
 }
