@@ -4,9 +4,7 @@
 
 Vector::Vector()
 {
-	x = 0.0;
-	y = 0.0;
-	z = 0.0;
+	
 }
 
 Vector::Vector(double, double, double)
@@ -29,6 +27,7 @@ void Vector::SetVector(const Point3F & lhs, const Point3F & rhs)
 Vector & Vector::operator+=(const Vector &)
 {
 	// TODO: 在此处插入 return 语句
+	return *this;
 }
 
 Vector Vector::operator+(const Vector &) const
@@ -39,6 +38,7 @@ Vector Vector::operator+(const Vector &) const
 Vector & Vector::operator-=(const Vector &)
 {
 	// TODO: 在此处插入 return 语句
+	return *this;
 }
 
 Vector Vector::operator-(const Vector &) const
