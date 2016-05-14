@@ -7,6 +7,12 @@
 
 int main()
 {
+	BigBlock game;
 
+	game.SetSize(4);
+	while (game.AddNumber())
+	{
+
+	}
 	return 0;
 }

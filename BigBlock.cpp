@@ -109,6 +109,7 @@ bool BigBlock::move()
 		}
 	} 
 	int flag;
+	int count = 0;
 	do
 	{
 		flag = 0;
@@ -125,11 +126,26 @@ bool BigBlock::move()
 				}
 			}
 		}
+		count++;//计算循环次数
 	} while (flag);//直到所有小方块都不动，结束循环
-	
+
+	if (count == 1)
+	{
+		return false;//没有小方块变动
+	}
+	else
+	{
+		update();
+		return true;//有小方块变动
+	}
 }
 
 Point3F BigBlock::cal_dest(const Block &)
 {
 	return Point3F();
+}
+
+void BigBlock::update()
+{
+
 }
