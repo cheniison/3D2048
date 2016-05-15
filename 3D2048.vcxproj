@@ -151,7 +151,7 @@
   <ItemGroup>
     <ClCompile Include="BigBlock.cpp" />
     <ClCompile Include="Block.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="openglmain.cpp" />
     <ClCompile Include="Point3F.cpp" />
     <ClCompile Include="Vector.cpp" />
     <ClCompile Include="VectorWithStartPoint.cpp" />

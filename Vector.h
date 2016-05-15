@@ -22,6 +22,7 @@ public:
 	friend Vector OuterProduct(const Vector&, const Vector&);//外积
 	friend Vector operator*(double, const Vector&);//数乘
 	friend Vector operator*(const Vector&, double);//数乘重载
+	Vector rotatef(double x,double y,double z);//向量旋转
 protected:
 	Point3F direct;//向量的大小和方向
 };

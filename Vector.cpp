@@ -85,3 +85,8 @@ Vector Vector::cal_unit_vector()
 {
 	return Vector();
 }
+
+Vector Vector::rotatef(double x, double y, double z)
+{
+	return Vector();
+}
