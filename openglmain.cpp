@@ -9,6 +9,8 @@
 #include"Block.h"
 #include"Point3F.h"
 #include"Vector.h"
+#include<vector>
+#pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
 //圆周率宏  
 #define GL_PI 3.14159f
 //获取屏幕的宽度  
@@ -25,11 +27,14 @@ GLfloat yRotAngle = 0.0f;
 GLfloat sizes[2];
 //受支持的点大小增量  
 GLfloat step;
-//设置坐标系为x(-100.0f,100.0f)、y(-100.0f,100.0f)、z(-100.0f,100.0f)  
-GLfloat coordinatesize = 10.0f;
+//观察点
+GLfloat standPoint[] = { 0.0f,0.0f,20.0f };
 
 
 GLboolean bWire = GL_TRUE;
+
+
+BigBlock bblock;
 //菜单回调函数  
 void processMenu(int value) {
 
@@ -49,6 +54,11 @@ void renderScreen(void) {
 	//将当前Matrix状态入栈  
 	glPushMatrix();
 	
+
+	glEnable(GL_BLEND);     //启用混合状态 
+							// 启动混合并设置混合因子
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	//进行平滑处理　  
 	glEnable(GL_POINT_SMOOTH);
 	glHint(GL_POINT_SMOOTH, GL_NICEST);
@@ -60,7 +70,7 @@ void renderScreen(void) {
 
 	//全局光照
 	{
-		GLfloat lmodel_ambient[] = { 0.2,0.2,0.2,1.0 };
+		GLfloat lmodel_ambient[] = { 0.2f,0.2f,0.2f,1.0f };
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
 	}
 	
@@ -129,46 +139,7 @@ void renderScreen(void) {
 	//设置绘画颜色为金色  
 	glColor3f(0.0f, 1.0f, 0.0f);
 
-	for (int i = -3; i <= 3;i+=2)
-	{
-		for (int j = -3; j <= 3; j+=2)
-		{
-			for (int k = -3; k <= 3; k+=2)
-			{
-				glPushMatrix();
-				//glColor3f(0.0, 1.0, 0.0);
-				glTranslatef(i, j, k);
-				GLfloat earth_mat_ambient[] = { (i + 3) / 6.0, (j + 3) / 6.0, (k + 3) / 6.0, 1.0f };
-				GLfloat earth_mat_diffuse[] = { (i + 3) / 6.0, (j + 3) / 6.0, (k + 3) / 6.0, 1.0f };
-				GLfloat earth_mat_specular[] = { 0.4f, 0.4f, 0.4f, 1.0f };
-				GLfloat earth_mat_emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-				GLfloat earth_mat_shininess = 10.0f;
-
-				glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat_ambient);
-				glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat_diffuse);
-				glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat_specular);
-				glMaterialfv(GL_FRONT, GL_EMISSION, earth_mat_emission);
-				glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
-				//glColor3f((i+3)/6.0, (j+ 3) / 6.0, (j + 3) / 6.0);
-				glutSolidCube(1.0f);
-				
-				//glColor3f(0.0, 0.0, 0.0);
-				////要显示的字符  
-				//char str[10];
-				//sprintf_s(str, "%d", i + j + k);
-				//int n = strlen(str);
-				////设置要在屏幕上显示字符的起始位置  
-				//glRasterPos3f(0.0, 0.0, 0.0);
-				////逐个显示字符串中的每个字符
-
-				//for (int i = 0; i < n; i++)
-				//	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, *(str + i));
-
-				glPopMatrix();
-			}
-		}
-
-	}
+	bblock.draw();
 	
 	//恢复压入栈的Matrix  
 	glPopMatrix();
@@ -192,6 +163,8 @@ void setupRederingState(void) {
 }
 //窗口大小变化回调函数  
 void changSize(GLint w, GLint h) {
+	//设置坐标系为x(-100.0f,100.0f)、y(-100.0f,100.0f)、z(-100.0f,100.0f)  
+	GLfloat coordinatesize = 10.0f;
 	//横宽比率  
 	GLfloat ratio;
 	//窗口宽高为零直接返回  
@@ -204,11 +177,13 @@ void changSize(GLint w, GLint h) {
 	//重置当前指定的矩阵为单位矩阵　  
 	glLoadIdentity();
 	ratio = (GLfloat)w / (GLfloat)h;
-	//正交投影  
-	if (w<h)
-		glOrtho(-coordinatesize, coordinatesize, -coordinatesize / ratio, coordinatesize / ratio, -coordinatesize, coordinatesize);
-	else
-		glOrtho(-coordinatesize*ratio, coordinatesize*ratio, -coordinatesize, coordinatesize, -coordinatesize, coordinatesize);
+	////正交投影  
+	//if (w<h)
+	//	glOrtho(-coordinatesize, coordinatesize, -coordinatesize / ratio, coordinatesize / ratio, -coordinatesize, coordinatesize);
+	//else
+	//	glOrtho(-coordinatesize*ratio, coordinatesize*ratio, -coordinatesize, coordinatesize, -coordinatesize, coordinatesize);
+	gluPerspective(45, ratio , 1.0f, 100.0f);
+	gluLookAt(standPoint[0], standPoint[1], standPoint[2], 0.0, 0.0 , 0.0, 0.0f, 1.0f, 0.0f);
 	//对模型视图矩阵堆栈应用随后的矩阵操作  
 	glMatrixMode(GL_MODELVIEW);
 	//重置当前指定的矩阵为单位矩阵　  
@@ -218,21 +193,22 @@ void wheel(int button, int dir, int x, int y)
 {
 	if (dir<=0)
 	{
-		if (coordinatesize >= 6 && coordinatesize <30)
+		if (standPoint[2] >= 6 && standPoint[2] <30)
 		{
-			++coordinatesize;
+			++standPoint[2];
 		}
 		
 	}
 	if (dir>0)
 	{
-		if (coordinatesize > 6 && coordinatesize <= 30)
+		if (standPoint[2] > 6 && standPoint[2] <= 30)
 		{
-			--coordinatesize;
+			--standPoint[2];
 		}
 		
 	}
 	changSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	//重新绘制  
 	glutPostRedisplay();
 }
 void rotatex(double vec[],double angle)
@@ -249,7 +225,66 @@ void rotatey(double vec[],double angle)
 }
 void keyboard(unsigned char key, int x, int y)
 {
-	
+	std::vector<int> temp;
+	switch (key)
+	{
+	case 'w':
+		temp.clear();
+		temp.push_back(0);
+		temp.push_back(0);
+		temp.push_back(0);
+		temp[0] = 1;
+		bblock.move(temp);
+		bblock.AddNumber();
+		break;
+	case 's':
+		temp.clear();
+		temp.push_back(0);
+		temp.push_back(0);
+		temp.push_back(0);
+		temp[0] = -1;
+		bblock.move(temp);
+		bblock.AddNumber();
+		break;
+	case 'a':
+		temp.clear();
+		temp.push_back(0);
+		temp.push_back(0);
+		temp.push_back(0);
+		temp[1] = 1;
+		bblock.move(temp);
+		bblock.AddNumber();
+		break;
+	case 'd':
+		temp.clear();
+		temp.push_back(0);
+		temp.push_back(0);
+		temp.push_back(0);
+		temp[1] = -1;
+		bblock.move(temp);
+		bblock.AddNumber();
+		break;
+	case 'q':
+		temp.clear();
+		temp.push_back(0);
+		temp.push_back(0);
+		temp.push_back(0);
+		temp[2] = 1;
+		bblock.move(temp);
+		bblock.AddNumber();
+		break;
+	case 'e':
+		temp.clear();
+		temp.push_back(0);
+		temp.push_back(0);
+		temp.push_back(0);
+		temp[2] = -1;
+		bblock.move(temp);
+		bblock.AddNumber();
+		break;
+	}
+	//重新绘制  
+	glutPostRedisplay();
 }
 
 void mouse(int button, int state, int x, int y)
@@ -321,15 +356,18 @@ void specialKey(int key, int x, int y) {
 	else if (key == GLUT_KEY_RIGHT) {
 		yRotAngle += 5.0f;
 	}
+	
 	//重新绘制  
 	glutPostRedisplay();
 }
 
 int main(int argc, char* argv[])
 {
-	int nModelMenu;
-	int nWireMenu;
-	int nMainMenu;
+	
+	//初始化游戏数据
+	bblock.SetSize(4);
+	bblock.AddNumber();
+
 	//初始化glut   
 	glutInit(&argc, argv);
 	//使用双缓冲区、深度缓冲区、模板缓冲区  
@@ -339,7 +377,7 @@ int main(int argc, char* argv[])
 	//获取系统的高像素  
 	SCREEN_HEIGHT = glutGet(GLUT_SCREEN_HEIGHT);
 	//创建窗口，窗口名字为OpenGL Glut Demo  
-	glutCreateWindow("OpenGL Glut Demo");
+	glutCreateWindow("2048");
 	//设置窗口大小  
 	glutReshapeWindow(windowWidth, windowHeight);
 	//窗口居中显示  
@@ -359,6 +397,9 @@ int main(int argc, char* argv[])
 	//设置全局渲染参数  
 	setupRederingState();
 	glutMainLoop();
+	
+
+
 	return 0;
 }
 

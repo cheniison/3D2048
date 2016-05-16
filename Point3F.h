@@ -15,7 +15,6 @@ public:
 	bool operator==(const Point3F & rhs)const;
 	bool operator!=(const Point3F & rhs)const;
 	friend double GetDistance(const Point3F &, const Point3F &);
-private:
 	double x;
 	double y;
 	double z;
