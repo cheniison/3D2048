@@ -21,6 +21,17 @@ void BigBlock::SetSize(int s)
 	}
 	size = s;
 	left = s*s*s;
+	//设置位置
+	for (int i = 0; i < size; ++i)
+	{
+		for (int j = 0; j < size; ++j)
+		{
+			for (int k = 0; k < size; ++k)
+			{
+				bigblock[i][j][k].SetLocation((i-1.5)*2,(j-1.5)*2,(k-1.5)*2);
+			}
+		}
+	}
 }
 
 bool BigBlock::IsFull()
@@ -89,27 +100,261 @@ bool BigBlock::AddNumber()
 		}
 	}
 	
+	return true;
 }
 
-bool BigBlock::move(const Vector& direct)
+bool BigBlock::move(const std::vector<int> &direct)
 {
 	std::vector<std::vector<std::vector<Point3F>>> dest;//小方块的终点
 
-	for (int i = 0; i < size; ++i)
+	//for (int i = 0; i < size; ++i)
+	//{
+	//	for (int j = 0; j < size; ++j)
+	//	{
+	//		for (int k = 0; k < size; ++k)
+	//		{
+	//			if (bigblock[i][j][k].number() != 0)
+	//			{
+	//				dest[i][j][k] = cal_dest(bigblock[i][j][k],i,j,k,direct);//算出每个小正方体的终点
+	//			}
+	//		}
+	//	}
+	//} 
+	if (direct[0]!=0)
 	{
-		for (int j = 0; j < size; ++j)
+		if (direct[0]>0)
 		{
-			for (int k = 0; k < size; ++k)
+			
+			//面遍历
+			for (int j = 0; j < size;++j)
 			{
-				if (bigblock[i][j][k].number() != 0)
+				for (int k = 0; k < size;++k)
 				{
-					dest[i][j][k] = cal_dest(bigblock[i][j][k],direct);//算出每个小正方体的终点
-				}
-			}
+					//柱状投影
+					int flag = 1;
+					int temp;
+					int p = size - 1;
+					for (int i = size - 1; i >= 0; --i)
+					{
+						if (bigblock[i][j][k].number()!=0)
+						{
+							//合并
+							if ((p != size-1)&&(bigblock[i][j][k].number()==bigblock[p+1][j][k].number())&&(flag==1))
+							{
+								bigblock[p + 1][j][k].number() += bigblock[i][j][k].number();
+								bigblock[i][j][k].number() = 0;
+								++left;
+								flag = 0;
+							}
+							else if(p!=i)
+							{
+								//交换
+								bigblock[p][j][k].number() = bigblock[i][j][k].number();
+								bigblock[i][j][k].number() = 0;
+							}
+							--p;
+						}
+					}//i
+				}//k
+			}//j
 		}
-	} 
+		else
+		{
+			//面遍历
+			for (int j = 0; j < size; ++j)
+			{
+				for (int k = 0; k < size; ++k)
+				{
+					//柱状投影
+					int flag = 1;
+					int temp;
+					int p = 0;
+					for (int i = 0; i <size; ++i)
+					{
+						
+						if (bigblock[i][j][k].number() != 0 )
+						{
+							//合并
+							if (p != 0 && bigblock[i][j][k].number() == bigblock[p - 1][j][k].number()&& flag == 1)
+							{
+								bigblock[p - 1][j][k].number() += bigblock[i][j][k].number();
+								bigblock[i][j][k].number() = 0;
+								++left;
+								flag = 0;
+							}
+							else if(p!=i)
+							{
+								//交换
+								bigblock[p][j][k].number() = bigblock[i][j][k].number();
+								bigblock[i][j][k].number() = 0;
+							}
+							++p;
+						}
+					}//i
+				}//k
+			}//j}
+		}
+	}
+	else if (direct[1]!=0)
+	{
+		if (direct[1]>0)
+		{
+			//面遍历
+			for (int i = 0; i < size; ++i)
+			{
+				for (int k = 0; k < size; ++k)
+				{
+					//柱状投影
+					int flag = 1;
+					int temp;
+					int p = size - 1;
+					for (int j = size - 1; j >= 0; --j)
+					{
+						
+						if (bigblock[i][j][k].number() != 0)
+						{
+							//合并
+							if (p != size-1 && bigblock[i][j][k].number() == bigblock[i][p+1][k].number()&& flag == 1)
+							{
+								bigblock[i][p + 1][k].number() += bigblock[i][j][k].number();
+								bigblock[i][j][k].number() = 0;
+								++left;
+								
+								flag = 0;
+							}
+							else if(p!=j)
+							{
+								//交换
+								bigblock[i][p][k].number() = bigblock[i][j][k].number();
+								bigblock[i][j][k].number() = 0;
+							}
+							--p;
+						}
+					}//i
+				}//k
+			}//j
+		}
+		else
+		{
+			//面遍历
+			for (int i = 0; i < size; ++i)
+			{
+				for (int k = 0; k < size; ++k)
+				{
+					//柱状投影
+					int flag = 1;
+					int temp;
+					int p = 0;
+					for (int j = 0; j <size; ++j)
+					{
+						
+						if (bigblock[i][j][k].number() != 0)
+						{
+							//合并
+							if (p != 0 && bigblock[i][j][k].number() == bigblock[i][p - 1][k].number()&&flag == 1)
+							{
+								bigblock[i][p - 1][k].number() += bigblock[i][j][k].number();
+								bigblock[i][j][k].number() = 0;
+								++left;
+								flag = 0;
+							}
+							else if(p!=j)
+							{
+								//交换
+								bigblock[i][p][k].number() = bigblock[i][j][k].number();
+								bigblock[i][j][k].number() = 0;
+							}
+							++p;
+						}
+					}//i
+				}//k
+			}//j}
+
+		}
+	}
+	else if (direct[2]!=0)
+	{
+		if (direct[2]>0)
+		{
+			//面遍历
+			for (int i = 0; i < size; ++i)
+			{
+				for (int j = 0; j < size; ++j)
+				{
+					//柱状投影
+					int flag = 1;
+					int temp;
+					int p = size - 1;
+					for (int k = size - 1; k >= 0; --k)
+					{
+						
+						if (bigblock[i][j][k].number() != 0 )
+						{
+							//合并
+							if (p != size-1 && bigblock[i][j][k].number() == bigblock[i][j][p + 1].number()&& flag == 1)
+							{
+								bigblock[i][j][p + 1].number() += bigblock[i][j][k].number();
+								bigblock[i][j][k].number() = 0;
+								++left;
+								flag = 0;
+							}
+							else if (p != k)
+							{
+								//交换
+								bigblock[i][j][p].number() = bigblock[i][j][k].number();
+								bigblock[i][j][k].number() = 0;;
+							}
+							--p;
+						}
+					}//i
+				}//k
+			}//j
+		}
+		else
+		{
+			//面遍历
+			for (int i = 0; i < size; ++i)
+			{
+				for (int j = 0; j < size; ++j)
+				{
+					//柱状投影
+					int flag = 1;
+					int temp;
+					int p = 0;
+					for (int k = 0; k <size; ++k)
+					{
+						
+						if (bigblock[i][j][k].number() != 0 )
+						{
+							//合并
+							if (p != 0 && bigblock[i][j][k].number() == bigblock[i][j][p - 1].number()&& flag == 1)
+							{
+								bigblock[i][j][p - 1].number() += bigblock[i][j][k].number();
+								bigblock[i][j][k].number() = 0;
+								++left;
+								flag = 0;
+							}
+							else if(p!=k)
+							{
+								//交换
+								/*temp = bigblock[i][j][k].number();
+								bigblock[i][j][k].number() = bigblock[p][j][k].number();
+								bigblock[p][j][k].number() = temp;*/
+								bigblock[i][j][p].number() = bigblock[i][j][k].number();
+								bigblock[i][j][k].number() = 0;
+							}
+							++p;
+						}
+					}//i
+				}//k
+			}//j}
+		}
+	}
+
 	int flag;
 	int count = 0;
+	/*
+	
 	do
 	{
 		flag = 0;
@@ -128,6 +373,8 @@ bool BigBlock::move(const Vector& direct)
 		}
 		count++;//计算循环次数
 	} while (flag);//直到所有小方块都不动，结束循环
+	*/
+	
 
 	if (count == 1)
 	{
@@ -140,12 +387,27 @@ bool BigBlock::move(const Vector& direct)
 	}
 }
 
-Point3F BigBlock::cal_dest(const Block &sblock,const Vector& direct)
+Point3F BigBlock::cal_dest(const Block &sblock,int i,int j,int k,const std::vector<int> &direct)
 {
+	
 	return Point3F();
 }
 
 void BigBlock::update()
 {
 
+}
+
+void BigBlock::draw()
+{
+	for (int i = 0; i < size;++i)
+	{
+		for (int j = 0; j < size; ++j)
+		{
+			for (int k = 0; k < size; ++k)
+			{
+				bigblock[i][j][k].draw();
+			}
+		}
+	}
 }

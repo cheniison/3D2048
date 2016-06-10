@@ -11,6 +11,9 @@ public:
 	virtual ~Vector();
 	void SetVector(double, double, double); 
 	void SetVector(const Point3F &lhs,const Point3F &rhs);//rhs÷∏œÚlhs
+	double getx() const{ return direct.x; }
+	double gety() const { return direct.y; }
+	double getz() const { return direct.z; }
 	Vector& operator+=(const Vector&);
 	Vector operator+(const Vector&)const;
 	Vector& operator-=(const Vector&);

@@ -14,9 +14,10 @@ public:
 	bool IsFull();//判断整个方块是否已满
 	bool IsEmpty();//判断方块是否为空
 	bool AddNumber();//随机给方块添加数字,若方块已满，则游戏结束
-	bool move(const Vector&);//如果有小方块移动，则返回真
-	Point3F cal_dest(const Block &,const Vector&);//已知其方向,计算小方块终点 
+	bool move(const std::vector<int> &direct);//如果有小方块移动，则返回真
+	Point3F cal_dest(const Block &, int i, int j, int k, const std::vector<int> &direct);//已知其方向,计算小方块终点 
 	void update();//更新bigblock和left
+	void draw();
 private:
 	Point3F location;//中心位置
 	std::vector<std::vector<std::vector<Block>>> bigblock;
